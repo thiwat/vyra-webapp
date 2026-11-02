@@ -1,0 +1,162 @@
+/* rc-picker theme (components/form/DatePicker, popup class `custom-picker`) */
+
+.rc-picker {
+  width: 100%;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: 0.25rem;
+  background-color: var(--color-card);
+}
+
+.rc-picker-focused {
+  border-color: rgb(var(--color-primary-rgb));
+}
+
+.group.field-error .rc-picker {
+  border-color: var(--color-error);
+}
+
+.rc-picker-disabled {
+  background-color: rgba(195, 195, 195, 0.2);
+  cursor: not-allowed;
+}
+
+.rc-picker-input {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.rc-picker-input input {
+  width: 100%;
+  outline: none !important;
+  border: none;
+  background: transparent;
+  padding: 0px 0.5rem;
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--color-font);
+}
+
+.rc-picker-clear {
+  inset-inline-end: 0;
+}
+
+.custom-picker {
+  z-index: 10000;
+  box-shadow: none !important;
+}
+
+.custom-picker .rc-picker-panel-container,
+.custom-picker .rc-picker-panel {
+  background-color: var(--color-card);
+  color: var(--color-font-dark);
+  border: none;
+  border-radius: 8px;
+}
+
+.custom-picker .rc-picker-panel {
+  padding: 10px;
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.custom-picker .rc-picker-header {
+  padding-bottom: 8px;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.custom-picker .rc-picker-header button {
+  padding: 2px 8px;
+  color: inherit;
+}
+
+.custom-picker .rc-picker-header .rc-picker-header-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-picker th {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.custom-picker .rc-picker-cell {
+  padding: 2px;
+  color: var(--color-disabled);
+}
+
+.custom-picker .rc-picker-cell-in-view {
+  color: var(--color-font-dark);
+}
+
+.custom-picker .rc-picker-cell-inner {
+  font-size: 14px !important;
+  width: 28px !important;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  background: transparent;
+}
+
+.custom-picker .rc-picker-cell-disabled .rc-picker-cell-inner {
+  opacity: 0.3;
+}
+
+.custom-picker .rc-picker-cell:hover .rc-picker-cell-inner {
+  background-color: rgba(var(--color-primary-rgb), 0.15);
+}
+
+.custom-picker .rc-picker-cell-selected > .rc-picker-cell-inner {
+  background-color: rgb(var(--color-primary-rgb));
+  color: #ffffff;
+}
+
+.custom-picker .rc-picker-cell-today .rc-picker-cell-inner {
+  border: 1px solid rgb(var(--color-primary-rgb));
+}
+
+.custom-picker .rc-picker-footer {
+  background-color: var(--color-card);
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.custom-picker .rc-picker-ok button {
+  background-color: rgb(var(--color-primary-rgb));
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 2px 12px;
+}
+
+.custom-picker .rc-picker-time-panel-column {
+  width: fit-content;
+  padding: 0px 4px;
+}
+
+.custom-picker .rc-picker-time-panel-column::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-picker .rc-picker-time-panel-cell-inner {
+  color: var(--color-font-dark);
+}
+
+.custom-picker .rc-picker-time-panel-cell-selected .rc-picker-time-panel-cell-inner {
+  background-color: rgba(var(--color-primary-rgb), 0.4) !important;
+  border-radius: 4px;
+}
+
+.custom-picker .rc-picker-time-panel-cell {
+  font-size: 14px;
+  font-weight: 300;
+  padding: 3px 0px;
+}

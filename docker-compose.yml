@@ -1,0 +1,12 @@
+services:
+  vyra-webapp:
+    build:
+      context: .
+    image: vyra-webapp
+    container_name: vyra-webapp
+    restart: always
+    env_file: .env
+    environment:
+      - PORT=4002
+    ports:
+      - '4002:4002'

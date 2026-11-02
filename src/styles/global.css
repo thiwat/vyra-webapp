@@ -1,0 +1,183 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Runtime values come from components/layouts/Theme.tsx:
+ *   --color-primary-rgb / --color-secondary-rgb  (site settings, "r, g, b")
+ *   --color-plane / card / font / font-dark / line (constants/theme.ts, light/dark)
+ *   --font-prompt (next/font)
+ * Opacity works everywhere: bg-primary/10, text-primary-700, border-line/50 ...
+ */
+
+/* Fallbacks only - layered, so the unlayered runtime values from Theme.tsx always win. */
+@layer base {
+  :root {
+    --color-primary-rgb: 0, 58, 112;
+    --color-secondary-rgb: 49, 84, 165;
+    --color-plane: #f5f5f7;
+    --color-card: #ffffff;
+    --color-font: #606060;
+    --color-font-dark: #222222;
+    --color-line: #dae1eb;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-prompt), ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: rgb(var(--color-primary-rgb));
+  --color-primary-50: rgba(var(--color-primary-rgb), 0.05);
+  --color-primary-100: rgba(var(--color-primary-rgb), 0.1);
+  --color-primary-200: rgba(var(--color-primary-rgb), 0.2);
+  --color-primary-300: rgba(var(--color-primary-rgb), 0.3);
+  --color-primary-400: rgba(var(--color-primary-rgb), 0.4);
+  --color-primary-500: rgba(var(--color-primary-rgb), 0.5);
+  --color-primary-600: rgba(var(--color-primary-rgb), 0.6);
+  --color-primary-700: rgba(var(--color-primary-rgb), 0.7);
+  --color-primary-800: rgba(var(--color-primary-rgb), 0.8);
+  --color-primary-900: rgba(var(--color-primary-rgb), 0.9);
+  --color-secondary: rgb(var(--color-secondary-rgb));
+
+  --color-plane: var(--color-plane);
+  --color-card: var(--color-card);
+  --color-line: var(--color-line);
+  --color-font: var(--color-font);
+  --color-font-dark: var(--color-font-dark);
+  --color-label: var(--color-font-dark);
+}
+
+@theme {
+  --color-icon: #c3c3c3;
+  --color-disabled: #c3c3c3;
+  --color-success: #2ebd85;
+  --color-error: #ef5a5f;
+  --color-warning: #e4ad4b;
+
+  --tracking-spacing-026: 0.26px;
+  --tracking-spacing-030: 0.3px;
+  --tracking-spacing-034: 0.34px;
+  --tracking-spacing-040: 0.4px;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--color-plane);
+    color: var(--color-font);
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* rc-dropdown positions its popup with inline offsets, which need these to apply. */
+.rc-dropdown {
+  position: absolute;
+}
+
+.rc-dropdown-hidden {
+  display: none;
+}
+
+/* ---------- utilities ---------- */
+
+@utility num {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- typography (mobile-first) ---------- */
+
+@utility title-hero {
+  @apply text-[28px] md:text-[48px] font-medium text-font-dark;
+}
+
+@utility title-bold {
+  @apply text-[22px] md:text-[32px] font-medium text-font-dark;
+}
+
+@utility header-bold {
+  @apply text-[18px] font-normal text-font-dark;
+}
+
+@utility header-base {
+  @apply text-[16px] font-normal text-font-dark;
+}
+
+@utility header-subtitle-strong {
+  @apply text-[14px] font-normal text-font-dark tracking-spacing-030;
+}
+
+@utility header-subtitle-light {
+  @apply text-[14px] font-light text-font-dark;
+}
+
+@utility header-field-title {
+  @apply text-[12px] font-normal text-font-dark tracking-spacing-040;
+}
+
+@utility body-emphasis {
+  @apply text-[16px] font-semibold text-font-dark tracking-spacing-034;
+}
+
+@utility body-strong {
+  @apply text-[14px] font-normal text-font-dark tracking-spacing-030;
+}
+
+@utility body-base {
+  @apply text-[14px] font-light text-font tracking-spacing-030;
+}
+
+@utility paragraph-base {
+  @apply text-[14px] font-light text-font tracking-spacing-030;
+}
+
+@utility paragraph-small {
+  @apply text-[12px] font-light text-font tracking-spacing-026;
+}
+
+@utility tagline-medium {
+  @apply text-[12px] font-medium text-font tracking-spacing-026;
+}
+
+@utility tagline-base {
+  @apply text-[12px] font-light text-font tracking-spacing-026;
+}
+
+@utility tagline-small-bold {
+  @apply text-[12px] font-bold text-font tracking-spacing-026;
+}
+
+@utility tagline-small {
+  @apply text-[12px] font-light text-font tracking-spacing-026;
+}
+
+/* ---------- print (render printable content into #print-root) ---------- */
+
+.print-area {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+  }
+
+  .print-area {
+    display: block;
+    height: auto;
+    padding: 20px;
+  }
+
+  .new-page {
+    break-after: page;
+  }
+}
