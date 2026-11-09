@@ -1,8 +1,7 @@
-import Cookies from 'cookies'
 import _omit from 'lodash/omit'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requestLogin } from '@/apis/server/auth'
-import { getCookieOptions } from '@/apis/server/cookie'
+import { getCookieOptions, openCookies } from '@/apis/server/cookie'
 import { methodNotAllowed, sendError } from '@/apis/server/request'
 import { TOKEN_COOKIE } from '@/constants/auth'
 
@@ -13,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const result = await requestLogin(req.body)
     if (result?.token) {
-      const cookies = new Cookies(req, res)
+      const cookies = openCookies(req, res)
       // backend `expires_in` is in seconds, `cookies` maxAge is in milliseconds
       const maxAge = result.expires_in ? result.expires_in * 1000 : undefined
       cookies.set(TOKEN_COOKIE, result.token, getCookieOptions(maxAge))

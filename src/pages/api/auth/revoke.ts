@@ -1,7 +1,6 @@
-import Cookies from 'cookies'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requestRevokeToken } from '@/apis/server/auth'
-import { getCookieOptions } from '@/apis/server/cookie'
+import { getCookieOptions, openCookies } from '@/apis/server/cookie'
 import { methodNotAllowed } from '@/apis/server/request'
 import { TOKEN_COOKIE } from '@/constants/auth'
 
@@ -9,7 +8,7 @@ import { TOKEN_COOKIE } from '@/constants/auth'
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') return methodNotAllowed(res, ['POST'])
 
-  const cookies = new Cookies(req, res)
+  const cookies = openCookies(req, res)
   const token = cookies.get(TOKEN_COOKIE)
 
   try {
