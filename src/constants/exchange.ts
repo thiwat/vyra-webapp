@@ -12,3 +12,11 @@ export const DEFAULT_CONNECTOR = {
   market: 'usdm_futures',
   environment: 'demo'
 }
+
+/** Defaults for a new bot. vyra-core applies the same risk defaults. */
+export const DEFAULT_BOT = {
+  strategy: 'breakout_1h',
+  symbol: 'ETHUSDT',
+  risk_pct: 2,
+  max_daily_loss_pct: 6
+}

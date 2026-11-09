@@ -9,4 +9,4 @@ services:
     environment:
       - PORT=4002
     ports:
-      - '4002:4002'
+      - '127.0.0.1:4002:4002'

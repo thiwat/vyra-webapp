@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { toTradeInput } from '@/services/trade_ticket'
 import { decimalsOf, formatClock, formatSigned, unrealizedPnl } from './trading'
 
 describe('trading format', () => {
@@ -22,34 +21,5 @@ describe('trading format', () => {
   it('flips unrealized P&L for shorts', () => {
     expect(unrealizedPnl('long', 100, 110, 2)).toBe(20)
     expect(unrealizedPnl('short', 100, 110, 2)).toBe(-20)
-  })
-})
-
-describe('toTradeInput', () => {
-  const values = {
-    symbol: 'ETHUSDT',
-    side: 'long',
-    entry_type: 'market',
-    stop_mode: 'pct',
-    stop_value: 0.9,
-    risk_reward: 2,
-    leverage: 5
-  } as const
-
-  it('maps the stop mode to the matching field', () => {
-    expect(toTradeInput(values).stop_loss_pct).toBe(0.9)
-    const price = toTradeInput({ ...values, stop_mode: 'price', stop_value: 2200 })
-    expect(price.stop_loss_price).toBe(2200)
-    expect(price.stop_loss_pct).toBeUndefined()
-  })
-
-  it('never sends an entry price with a market order', () => {
-    expect(toTradeInput({ ...values, entry_price: 1 }).entry_price).toBeUndefined()
-  })
-
-  it('holds back incomplete input', () => {
-    expect(toTradeInput({ ...values, stop_value: '' })).toBeNull()
-    expect(toTradeInput({ ...values, risk_reward: 0 })).toBeNull()
-    expect(toTradeInput({ ...values, entry_type: 'limit' })).toBeNull()
   })
 })

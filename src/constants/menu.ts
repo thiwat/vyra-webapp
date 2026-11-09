@@ -21,7 +21,7 @@ export const HIDE_MENU: string[] = []
 
 export const MENU: MenuProps[] = [
   { label: t('menu_dashboard'), icon: 'House', href: '/' },
-  { label: t('menu_terminal'), icon: 'ChartLine', href: '/terminal' },
+  { label: t('menu_bots'), icon: 'Robot', href: '/bots' },
   { label: t('menu_positions'), icon: 'Stack', href: '/positions' },
   { label: t('menu_journal'), icon: 'Notebook', href: '/journal' }
 ]

@@ -1,3 +1,4 @@
+import { Trade } from '@/apis/client/trading/types'
 import { useOverviewStateValue } from '@/atoms/overview'
 import Panel, { EmptyState } from '@/components/business/trading/Panel'
 import Button from '@/components/ui/Button'
@@ -11,39 +12,39 @@ const PositionsPage = () => {
   const { closing, onClose } = useTradeActions()
   if (!data) return null
 
-  const trade = data.active_trade
-  const position = data.positions.find(p => p.symbol == trade?.symbol)
-  const mark = data.mark_prices[trade?.symbol]
-  const pending = ['pending_entry', 'entry_unknown'].includes(trade?.status)
-  const margin = position
-    ? (Math.abs(position.quantity) * position.entry_price) / (trade.leverage || 1)
-    : 0
-  const protection = !trade?.stop_loss_confirmed
-    ? { label: t('positions_no_sl'), className: 'bg-error/15 !text-error' }
-    : trade?.take_profit_confirmed
-      ? { label: t('positions_sl_tp_ok'), className: 'bg-success/15 !text-success' }
-      : { label: t('positions_no_tp'), className: 'bg-warning/15 !text-warning' }
+  const trades = data.active_trades || []
+  const protection = (trade: Trade) =>
+    !trade.stop_loss_confirmed
+      ? { label: t('positions_no_sl'), className: 'bg-error/15 !text-error' }
+      : trade.take_profit_confirmed
+        ? { label: t('positions_sl_tp_ok'), className: 'bg-success/15 !text-success' }
+        : trade.source == 'bot'
+          ? { label: t('positions_sl_ok'), className: 'bg-success/15 !text-success' }
+          : { label: t('positions_no_tp'), className: 'bg-warning/15 !text-warning' }
+  const rows = trades.map(trade => {
+    const position = data.positions.find(p => p.symbol == trade.symbol)
+    const quantity = Math.abs(position?.quantity || 0)
+    return {
+      trade,
+      id: trade.id,
+      symbol: trade.symbol,
+      side: trade.side,
+      source: trade.source,
+      quantity,
+      entry_price: position?.entry_price,
+      mark: data.mark_prices[trade.symbol],
+      margin: position ? (quantity * position.entry_price) / (trade.leverage || 1) : 0,
+      pending: ['pending_entry', 'entry_unknown'].includes(trade.status)
+    }
+  })
 
   return (
     <div className={'grid gap-3.5'}>
-      <Panel
-        title={t('positions_open')}
-        action={
-          <div>
-            <Button
-              size={'small'}
-              type={'danger_primary'}
-              disabled={!trade || closing}
-              onClick={onClose}
-            >
-              {pending ? t('trading_close_entry') : t('trading_emergency_close')}
-            </Button>
-          </div>
-        }
-      >
-        {position ? (
+      <Panel title={t('positions_open')}>
+        {rows.length ? (
           <Table
-            data={[{ ...position, side: trade.side }]}
+            data={rows}
+            keyData={'id'}
             columns={[
               { label: t('positions_symbol'), keyData: 'symbol' },
               {
@@ -54,12 +55,15 @@ const PositionsPage = () => {
                 )
               },
               {
+                label: t('bot_source_label'),
+                keyData: 'source',
+                renderer: row => t(`trade_source_${row.source}`)
+              },
+              {
                 label: t('positions_size'),
                 keyData: 'quantity',
                 align: 'right',
-                renderer: row => (
-                  <span className={'num'}>{formatAmount(Math.abs(row.quantity), 3)}</span>
-                )
+                renderer: row => <span className={'num'}>{formatAmount(row.quantity, 3)}</span>
               },
               {
                 label: t('positions_entry'),
@@ -71,39 +75,55 @@ const PositionsPage = () => {
                 label: t('positions_mark'),
                 keyData: 'mark',
                 align: 'right',
-                renderer: () => <span className={'num'}>{formatAmount(mark)}</span>
+                renderer: row => <span className={'num'}>{formatAmount(row.mark)}</span>
               },
               {
                 label: t('positions_margin'),
                 keyData: 'margin',
                 align: 'right',
-                renderer: () => <span className={'num'}>{formatAmount(margin)}</span>
+                renderer: row => <span className={'num'}>{formatAmount(row.margin)}</span>
               },
               {
                 label: t('positions_upnl'),
                 keyData: 'upnl',
                 align: 'right',
                 renderer: row => {
-                  const pnl = unrealizedPnl(row.side, row.entry_price, mark, Math.abs(row.quantity))
+                  if (!row.quantity) return '-'
+                  const pnl = unrealizedPnl(row.side, row.entry_price, row.mark, row.quantity)
                   return <span className={`num ${pnlClass(pnl)}`}>{formatSigned(pnl)}</span>
                 }
               },
               {
                 label: t('positions_protection'),
                 keyData: 'protection',
-                renderer: () => (
-                  <span className={`tagline-small px-1.5 py-0.5 rounded ${protection.className}`}>
-                    {protection.label}
-                  </span>
+                renderer: row => {
+                  const state = protection(row.trade)
+                  return (
+                    <span className={`tagline-small px-1.5 py-0.5 rounded ${state.className}`}>
+                      {state.label}
+                    </span>
+                  )
+                }
+              },
+              {
+                label: '',
+                keyData: 'action',
+                align: 'right',
+                renderer: row => (
+                  <Button
+                    size={'small'}
+                    type={'danger_primary'}
+                    disabled={closing}
+                    onClick={() => onClose(row.trade)}
+                  >
+                    {row.pending ? t('trading_close_entry') : t('trading_emergency_close')}
+                  </Button>
                 )
               }
             ]}
           />
         ) : (
-          <EmptyState
-            title={pending ? t('positions_pending_entry') : t('positions_none')}
-            detail={pending ? t('review_pending') : t('positions_none_detail')}
-          />
+          <EmptyState title={t('positions_none')} detail={t('positions_none_detail')} />
         )}
       </Panel>
       <Panel

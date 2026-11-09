@@ -88,7 +88,8 @@ export type Trade = {
   entry_type: 'market' | 'limit'
   status:
     'pending_entry' | 'entry_unknown' | 'open' | 'unprotected' | 'closed' | 'canceled' | 'rejected'
-  source: 'terminal' | 'external'
+  source: 'terminal' | 'external' | 'bot'
+  bot_id?: string
   leverage?: number
   entry_price?: number
   stop_loss_price?: number
@@ -136,22 +137,15 @@ export type Overview = {
   rules: RiskRules
   discipline: Discipline
   active_trade: Trade | null
+  active_trades: Trade[]
+  /** Allowed symbols per bot strategy. */
+  bot_symbols: Record<string, string[]>
+  bot_strategies: string[]
   symbols: SymbolRules[]
   account?: { wallet_balance: number; available_balance: number }
   positions: Position[]
   algo_orders: AlgoOrder[]
   mark_prices: Record<string, number>
-}
-
-export type TradeInput = {
-  symbol: string
-  side: 'long' | 'short'
-  entry_type: 'market' | 'limit'
-  entry_price?: number
-  stop_loss_price?: number
-  stop_loss_pct?: number
-  risk_reward: number
-  leverage: number
 }
 
 export type TradePlan = {
@@ -170,7 +164,7 @@ export type TradePlan = {
   estimated_liquidation_price: number
   min_notional: number
   capped_by_max_notional: boolean
+  stop_range: { nearest_price: number; farthest_price: number } | null
   errors: PlanCheck[]
 }
 
-export type Candle = { time: number; open: number; high: number; low: number; close: number }

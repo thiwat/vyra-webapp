@@ -11,7 +11,14 @@ const AlertBanner = () => {
   const { closing, retrying, onClose, onRetry } = useTradeActions()
   if (!data) return null
 
-  const trade = data.active_trade
+  const trades = data.active_trades || []
+  const unknown = trades.find(row => row.status == 'entry_unknown')
+  const unprotected = trades.find(row => row.status == 'unprotected')
+  const overBudget = trades.find(row => row.status == 'open' && row.actual_risk > row.risk_limit)
+  // Bots leave on their exit signal, so they never have a Take Profit.
+  const noTp = trades.find(
+    row => row.status == 'open' && row.source != 'bot' && !row.take_profit_confirmed
+  )
   const age = data.reconcile_age_seconds
   const stale = age === null || age > STALE_SECONDS
 
@@ -33,7 +40,7 @@ const AlertBanner = () => {
     )
   }
 
-  if (trade?.status == 'entry_unknown') {
+  if (unknown) {
     return (
       <div role={'alert'} className={'px-5 py-2 bg-warning/15 border-b border-warning body-base'}>
         <b className={'!text-font-dark'}>{t('trading_alert_unknown')}</b>
@@ -42,7 +49,8 @@ const AlertBanner = () => {
     )
   }
 
-  if (trade?.status == 'unprotected') {
+  if (unprotected) {
+    const trade = unprotected
     return (
       <div
         role={'alert'}
@@ -59,13 +67,18 @@ const AlertBanner = () => {
         </span>
         {!!trade.stop_loss_price && (
           <div>
-            <Button size={'small'} disabled={retrying} onClick={() => onRetry()}>
+            <Button size={'small'} disabled={retrying} onClick={() => onRetry(trade)}>
               {t('trading_retry_stop')}
             </Button>
           </div>
         )}
         <div>
-          <Button size={'small'} type={'danger_primary'} disabled={closing} onClick={onClose}>
+          <Button
+            size={'small'}
+            type={'danger_primary'}
+            disabled={closing}
+            onClick={() => onClose(trade)}
+          >
             {t('trading_emergency_close')}
           </Button>
         </div>
@@ -82,7 +95,8 @@ const AlertBanner = () => {
     )
   }
 
-  if (trade?.status == 'open' && trade.actual_risk > trade.risk_limit) {
+  if (overBudget) {
+    const trade = overBudget
     return (
       <div role={'status'} className={'px-5 py-2 bg-warning/15 border-b border-warning body-base'}>
         <b className={'!text-font-dark'}>
@@ -96,10 +110,10 @@ const AlertBanner = () => {
     )
   }
 
-  if (trade?.status == 'open' && !trade.take_profit_confirmed) {
+  if (noTp) {
     return (
       <div role={'status'} className={'px-5 py-2 bg-warning/15 border-b border-warning body-base'}>
-        <b className={'!text-font-dark'}>{t('trading_alert_no_tp', { symbol: trade.symbol })}</b>
+        <b className={'!text-font-dark'}>{t('trading_alert_no_tp', { symbol: noTp.symbol })}</b>
         {` ${t('trading_alert_no_tp_detail')}`}
       </div>
     )
