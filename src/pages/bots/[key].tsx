@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useOverviewStateValue } from '@/atoms/overview'
+import NextEntry from '@/components/business/bot/NextEntry'
 import Panel, { EmptyState, InfoRow } from '@/components/business/trading/Panel'
 import TradeTable from '@/components/business/trading/TradeTable'
 import Form, { FormItem } from '@/components/form/Form'
@@ -148,6 +149,9 @@ const BotDetailPage = () => {
                 label={t('bot_last_run')}
                 value={bot.last_run_at ? formatDatetime(bot.last_run_at, 'DD MMM, HH:mm') : '-'}
               />
+              {bot.next_entry && (
+                <InfoRow label={t('bot_next_entry')} value={<NextEntry next={bot.next_entry} />} />
+              )}
               {!!bot.last_message && (
                 <p role={'status'} className={'paragraph-small py-1.5'}>
                   {bot.last_message}

@@ -22,4 +22,15 @@ export type Bot = {
   wins: number
   losses: number
   active_trade: Trade | null
+  /** Running and flat only. Levels the next 1h close must break, with distance from the mark price. */
+  next_entry: BotNextEntry | null
+}
+
+export type BotNextEntry = {
+  long_above?: number
+  short_below?: number
+  long_distance_pct?: number
+  short_distance_pct?: number
+  blocked?: 'too_volatile'
+  atr_pct: number
 }

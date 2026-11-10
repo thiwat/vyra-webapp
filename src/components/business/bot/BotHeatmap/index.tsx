@@ -1,3 +1,4 @@
+import NextEntry from '@/components/business/bot/NextEntry'
 import { formatAmount, formatSigned, pnlClass, sideClass } from '@/utils/trading'
 import { t } from '@/utils/translate'
 import { BotHeatmapProps } from './types'
@@ -75,6 +76,7 @@ const BotHeatmap = ({ rows, onTileClick }: BotHeatmapProps) => {
                   <span className={`ml-2 ${sideClass(trade.side)}`}>{trade.side.toUpperCase()}</span>
                 )}
               </span>
+              <NextEntry next={bot.next_entry} className={'!text-font-dark'} />
             </button>
           )
         })}
